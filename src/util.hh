@@ -60,4 +60,4 @@ inline int SystemCall( const std::string & s_attempt, const int return_value )
 /* zero out an arbitrary structure */
 template <typename T> void zero( T & x ) { memset( &x, 0, sizeof( x ) ); }
 
-#endif
+#endif /* UTIL_HH */

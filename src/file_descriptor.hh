@@ -23,7 +23,6 @@ protected:
   void register_read( void ) { read_count_++; }
   void register_write( void ) { write_count_++; }
   void set_eof( void ) { eof_ = true; }
-  const int & fd_num( void ) const { return fd_; }
 
 public:
   /* construct from fd number */
@@ -36,6 +35,7 @@ public:
   virtual ~FileDescriptor();
 
   /* accessors */
+  const int & fd_num( void ) const { return fd_; }
   const bool & eof( void ) const { return eof_; }
   unsigned int read_count( void ) const { return read_count_; }
   unsigned int write_count( void ) const { return write_count_; }
