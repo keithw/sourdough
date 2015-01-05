@@ -85,7 +85,7 @@ Address::Address( const std::string & hostname, const std::string & service )
   addrinfo hints;
   zero( hints );
   hints.ai_family = AF_INET6;
-  hints.ai_flags = AI_V4MAPPED | AI_ALL | AI_ADDRCONFIG;
+  hints.ai_flags = AI_V4MAPPED | AI_ALL;
 
   *this = Address( hostname, service, &hints );
 }
