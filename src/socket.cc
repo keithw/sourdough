@@ -111,7 +111,7 @@ void UDPSocket::sendto( const Address & destination, const string & payload )
                                     payload.size(),
                                     0,
                                     &destination.to_sockaddr(),
-                                    sizeof( destination.to_sockaddr() ) ) );
+                                    destination.size() ) );
 
     register_write();
 }
