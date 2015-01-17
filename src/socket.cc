@@ -106,25 +106,35 @@ pair<Address, string> UDPSocket::recvfrom( void )
 /* send datagram to specified address */
 void UDPSocket::sendto( const Address & destination, const string & payload )
 {
-  SystemCall( "sendto", ::sendto( fd_num(),
-				  payload.data(),
-				  payload.size(),
-				  0,
-				  &destination.to_sockaddr(),
-				  destination.size() ) );
+  const ssize_t bytes_sent =
+    SystemCall( "sendto", ::sendto( fd_num(),
+				    payload.data(),
+				    payload.size(),
+				    0,
+				    &destination.to_sockaddr(),
+				    destination.size() ) );
 
   register_write();
+
+  if ( size_t( bytes_sent ) != payload.size() ) {
+    throw runtime_error( "datagram payload too big for sendto()" );
+  }
 }
 
 /* send datagram to connected address */
 void UDPSocket::send( const string & payload )
 {
-  SystemCall( "send", ::send( fd_num(),
-			      payload.data(),
-			      payload.size(),
-			      0 ) );
+  const ssize_t bytes_sent =
+    SystemCall( "send", ::send( fd_num(),
+				payload.data(),
+				payload.size(),
+				0 ) );
 
   register_write();
+
+  if ( size_t( bytes_sent ) != payload.size() ) {
+    throw runtime_error( "datagram payload too big for send()" );
+  }
 }
 
 /* mark the socket as listening for incoming connections */
