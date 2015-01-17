@@ -116,6 +116,17 @@ void UDPSocket::sendto( const Address & destination, const string & payload )
   register_write();
 }
 
+/* send datagram to connected address */
+void UDPSocket::send( const string & payload )
+{
+  SystemCall( "send", ::send( fd_num(),
+			      payload.data(),
+			      payload.size(),
+			      0 ) );
+
+  register_write();
+}
+
 /* mark the socket as listening for incoming connections */
 void TCPSocket::listen( const int backlog )
 {

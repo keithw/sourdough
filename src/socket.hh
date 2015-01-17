@@ -44,6 +44,9 @@ public:
 
   /* send datagram to specified address */
   void sendto( const Address & peer, const std::string & buffer );
+
+  /* send datagram to connected address */
+  void send( const std::string & buffer );
 };
 
 /* TCP socket */
