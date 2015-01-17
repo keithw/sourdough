@@ -106,20 +106,20 @@ pair<Address, string> UDPSocket::recvfrom( void )
 /* send datagram to specified address */
 void UDPSocket::sendto( const Address & destination, const string & payload )
 {
-    SystemCall( "sendto", ::sendto( fd_num(),
-                                    payload.data(),
-                                    payload.size(),
-                                    0,
-                                    &destination.to_sockaddr(),
-                                    destination.size() ) );
+  SystemCall( "sendto", ::sendto( fd_num(),
+				  payload.data(),
+				  payload.size(),
+				  0,
+				  &destination.to_sockaddr(),
+				  destination.size() ) );
 
-    register_write();
+  register_write();
 }
 
 /* mark the socket as listening for incoming connections */
 void TCPSocket::listen( const int backlog )
 {
-    SystemCall( "listen", ::listen( fd_num(), backlog ) );
+  SystemCall( "listen", ::listen( fd_num(), backlog ) );
 }
 
 /* accept a new incoming connection */
