@@ -25,5 +25,5 @@ AC_TYPE_UINT16_T
 
 # Checks for library functions.
 
-AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile datagrump/Makefile])
 AC_OUTPUT

@@ -31,6 +31,9 @@ public:
   /* accessors */
   Address local_address( void ) const;
   Address peer_address( void ) const;
+
+  /* allow local address to be reused sooner, at the cost of some robustness */
+  void set_reuseaddr( void );
 };
 
 /* UDP socket */
@@ -39,14 +42,23 @@ class UDPSocket : public Socket
 public:
   UDPSocket() : Socket( AF_INET6, SOCK_DGRAM ) {}
 
-  /* receive datagram and where it came from */
-  std::pair<Address, std::string> recvfrom( void );
+  struct received_datagram {
+    Address source_address;
+    uint64_t timestamp;
+    std::string payload;
+  };
+
+  /* receive datagram, timestamp, and where it came from */
+  received_datagram recv( void );
 
   /* send datagram to specified address */
-  void sendto( const Address & peer, const std::string & buffer );
+  void sendto( const Address & peer, const std::string & payload );
 
   /* send datagram to connected address */
-  void send( const std::string & buffer );
+  void send( const std::string & payload );
+
+  /* turn on timestamps on receipt */
+  void set_timestamps( void );
 };
 
 /* TCP socket */
@@ -61,9 +73,6 @@ public:
 
   /* accept a new incoming connection */
   TCPSocket accept( void );
-
-  /* allow local address to be reused sooner, at the cost of some robustness */
-  void set_reuseaddr( void );
 };
 
 #endif /* SOCKET_HH */

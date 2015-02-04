@@ -2,6 +2,7 @@
 
 #include "socket.hh"
 #include "util.hh"
+#include "timestamp.hh"
 
 using namespace std;
 
@@ -75,32 +76,64 @@ void Socket::connect( const Address & address )
 }
 
 /* receive datagram and where it came from */
-pair<Address, string> UDPSocket::recvfrom( void )
+UDPSocket::received_datagram UDPSocket::recv( void )
 {
   static const ssize_t RECEIVE_MTU = 65536;
 
-  /* receive source address and payload */
-  sockaddr_storage packet_remote_addr;
-  char buffer[ RECEIVE_MTU ];
+  /* receive source address, timestamp and payload */
+  sockaddr_storage datagram_source_address;
+  msghdr header; zero( header );
+  iovec msg_iovec; zero( msg_iovec );
 
-  socklen_t fromlen = sizeof( packet_remote_addr );
+  char msg_payload[ RECEIVE_MTU ];
+  char msg_control[ RECEIVE_MTU ];
 
-  ssize_t recv_len = SystemCall( "recvfrom",
-				 ::recvfrom( fd_num(),
-					     buffer,
-					     sizeof( buffer ),
-					     MSG_TRUNC,
-					     reinterpret_cast<sockaddr *>( &packet_remote_addr ),
-					     &fromlen ) );
+  /* prepare to get the source address */
+  header.msg_name = &datagram_source_address;
+  header.msg_namelen = sizeof( datagram_source_address );
 
-  if ( recv_len > RECEIVE_MTU ) {
-    throw runtime_error( "recvfrom (oversized datagram)" );
-  }
+  /* prepare to get the payload */
+  msg_iovec.iov_base = msg_payload;
+  msg_iovec.iov_len = sizeof( msg_payload );
+  header.msg_iov = &msg_iovec;
+  header.msg_iovlen = 1;
+
+  /* prepare to get the timestamp */
+  header.msg_control = msg_control;
+  header.msg_controllen = sizeof( msg_control );
+
+  /* call recvmsg */
+  ssize_t recv_len = SystemCall( "recvmsg",
+				 recvmsg( fd_num(), &header, 0 ) );
 
   register_read();
 
-  return make_pair( Address( packet_remote_addr, fromlen ),
-		    string( buffer, recv_len ) );
+  /* make sure we got the whole datagram */
+  if ( header.msg_flags & MSG_TRUNC ) {
+    throw runtime_error( "recvfrom (oversized datagram)" );
+  } else if ( header.msg_flags ) {
+    throw runtime_error( "recvfrom (unhandled flag)" );
+  }
+
+  uint64_t timestamp = -1;
+
+  /* find the timestamp header (if there is one) */
+  cmsghdr *ts_hdr = CMSG_FIRSTHDR( &header );
+  while ( ts_hdr ) {
+    if ( ts_hdr->cmsg_level == SOL_SOCKET
+	 and ts_hdr->cmsg_type == SO_TIMESTAMPNS ) {
+      const timespec * const kernel_time = reinterpret_cast<timespec *>( CMSG_DATA( ts_hdr ) );
+      timestamp = timestamp_ms( *kernel_time );
+    }
+    ts_hdr = CMSG_NXTHDR( &header, ts_hdr );
+  }
+
+  received_datagram ret = { Address( datagram_source_address,
+				     header.msg_namelen ),
+			    timestamp,
+			    string( msg_payload, recv_len ) };
+
+  return ret;
 }
 
 /* send datagram to specified address */
@@ -151,8 +184,15 @@ TCPSocket TCPSocket::accept( void )
 }
 
 /* allow local address to be reused sooner, at the cost of some robustness */
-void TCPSocket::set_reuseaddr( void )
+void Socket::set_reuseaddr( void )
 {
   const int value = true;
   SystemCall( "setsockopt", setsockopt( fd_num(), SOL_SOCKET, SO_REUSEADDR, &value, sizeof( value ) ) );
+}
+
+/* turn on timestamps on receipt */
+void UDPSocket::set_timestamps( void )
+{
+  const int value = true;
+  SystemCall( "setsockopt", setsockopt( fd_num(), SOL_SOCKET, SO_TIMESTAMPNS, &value, sizeof( value ) ) );
 }

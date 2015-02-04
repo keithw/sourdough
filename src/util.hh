@@ -4,6 +4,7 @@
 #include <system_error>
 #include <iostream>
 #include <string>
+#include <cstring>
 
 /* tagged_error: system_error + name of what was being attempted */
 class tagged_error : public std::system_error

@@ -17,3 +17,5 @@ Makefile.in
 /examples/tcpclient
 /examples/tcpserver
 /compile
+/datagrump/sender
+/datagrump/receiver
