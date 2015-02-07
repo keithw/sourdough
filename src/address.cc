@@ -16,28 +16,20 @@ Address::Address()
     addr_()
 {}
 
-Address::Address( const sockaddr_storage & addr, const size_t size )
+Address::Address( const raw & addr, const size_t size )
+  : Address( addr.as_sockaddr, size )
+{}
+
+Address::Address( const sockaddr & addr, const size_t size )
   : size_( size ),
     addr_()
 {
-  /* make sure proposed sockaddr_storage can fit */
-  if ( size > sizeof( addr_ ) ) {
-    throw runtime_error( "invalid sockaddr_storage size" );
-  }
-
-  memcpy( &addr_, &addr, size );
-}
-
-Address::Address( const sockaddr * addr, const size_t size )
-  : size_( size ),
-    addr_()
-{
-  /* make sure proposed sockaddr_storage can fit */
+  /* make sure proposed sockaddr can fit */
   if ( size > sizeof( addr_ ) ) {
     throw runtime_error( "invalid sockaddr size" );
   }
 
-  memcpy( &addr_, addr, size );
+  memcpy( &addr_, &addr, size );
 }
 
 /* error category for getaddrinfo and getnameinfo */
@@ -75,7 +67,7 @@ Address::Address( const string & node, const string & service, const addrinfo * 
   unique_ptr<addrinfo, Freeaddrinfo_Deleter> wrapped_address( resolved_address );
 
   /* assign to our private members (making sure size fits) */
-  *this = Address( wrapped_address->ai_addr, wrapped_address->ai_addrlen );
+  *this = Address( *wrapped_address->ai_addr, wrapped_address->ai_addrlen );
 }
 
 /* construct by resolving host name and service name */
@@ -140,7 +132,7 @@ string Address::to_string( void ) const
 
 const sockaddr & Address::to_sockaddr( void ) const
 {
-  return *reinterpret_cast<const sockaddr *>( &addr_ );
+  return addr_.as_sockaddr;
 }
 
 /* equality */

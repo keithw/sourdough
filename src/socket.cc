@@ -39,11 +39,11 @@ Socket::Socket( FileDescriptor && fd, const int domain, const int type )
 Address Socket::get_address( const std::string & name_of_function,
 			     const std::function<int(int, sockaddr *, socklen_t *)> & function ) const
 {
-  sockaddr_storage address;
+  Address::raw address;
   socklen_t size = sizeof( address );
 
   SystemCall( name_of_function, function( fd_num(),
-					  reinterpret_cast<sockaddr *>( &address ),
+					  &address.as_sockaddr,
 					  &size ) );
 
   return Address( address, size );
@@ -81,7 +81,7 @@ UDPSocket::received_datagram UDPSocket::recv( void )
   static const ssize_t RECEIVE_MTU = 65536;
 
   /* receive source address, timestamp and payload */
-  sockaddr_storage datagram_source_address;
+  Address::raw datagram_source_address;
   msghdr header; zero( header );
   iovec msg_iovec; zero( msg_iovec );
 
@@ -128,7 +128,7 @@ UDPSocket::received_datagram UDPSocket::recv( void )
     ts_hdr = CMSG_NXTHDR( &header, ts_hdr );
   }
 
-  received_datagram ret = { Address( datagram_source_address,
+  received_datagram ret = { Address( datagram_source_address.as_sockaddr,
 				     header.msg_namelen ),
 			    timestamp,
 			    string( msg_payload, recv_len ) };

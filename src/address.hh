@@ -10,9 +10,16 @@
 /* Address class for IPv4/IPv6 addresses */
 class Address
 {
+public:
+  typedef union {
+    sockaddr as_sockaddr;
+    sockaddr_storage as_sockaddr_storage;
+  } raw;
+
 private:
   socklen_t size_;
-  sockaddr_storage addr_;
+
+  raw addr_;
 
   /* private constructor given ip/host, service/port, and optional hints */
   Address( const std::string & node, const std::string & service, const addrinfo * hints );
@@ -20,8 +27,8 @@ private:
 public:
   /* constructors */
   Address();
-  Address( const sockaddr_storage & addr, const size_t size );
-  Address( const sockaddr * addr, const size_t size );
+  Address( const raw & addr, const size_t size );
+  Address( const sockaddr & addr, const size_t size );
 
   /* construct by resolving host name and service name */
   Address( const std::string & hostname, const std::string & service );
