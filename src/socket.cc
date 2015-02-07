@@ -183,16 +183,22 @@ TCPSocket TCPSocket::accept( void )
   return TCPSocket( FileDescriptor( SystemCall( "accept", ::accept( fd_num(), nullptr, nullptr ) ) ) );
 }
 
+/* set socket option */
+template <typename option_type>
+void Socket::setsockopt( const int level, const int option, const option_type & option_value )
+{
+  SystemCall( "setsockopt", ::setsockopt( fd_num(), level, option,
+					  &option_value, sizeof( option_value ) ) );
+}
+
 /* allow local address to be reused sooner, at the cost of some robustness */
 void Socket::set_reuseaddr( void )
 {
-  const int value = true;
-  SystemCall( "setsockopt", setsockopt( fd_num(), SOL_SOCKET, SO_REUSEADDR, &value, sizeof( value ) ) );
+  setsockopt( SOL_SOCKET, SO_REUSEADDR, int( true ) );
 }
 
 /* turn on timestamps on receipt */
 void UDPSocket::set_timestamps( void )
 {
-  const int value = true;
-  SystemCall( "setsockopt", setsockopt( fd_num(), SOL_SOCKET, SO_TIMESTAMPNS, &value, sizeof( value ) ) );
+  setsockopt( SOL_SOCKET, SO_TIMESTAMPNS, int( true ) );
 }
