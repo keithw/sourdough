@@ -128,7 +128,7 @@ UDPSocket::received_datagram UDPSocket::recv( void )
     ts_hdr = CMSG_NXTHDR( &header, ts_hdr );
   }
 
-  received_datagram ret = { Address( datagram_source_address.as_sockaddr,
+  received_datagram ret = { Address( datagram_source_address,
 				     header.msg_namelen ),
 			    timestamp,
 			    string( msg_payload, recv_len ) };
