@@ -1,0 +1,25 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my $receiver_pid = fork;
+
+if ( $receiver_pid < 0 ) {
+  die qq{$!};
+} elsif ( $receiver_pid == 0 ) {
+  # child
+  exec q{./receiver 9090} or die qq{$!};
+}
+
+# run the sender inside a linkshell and a delayshell
+system( q{mm-delay 20 mm-link /usr/local/share/mahimahi/traces/VerizonLTE-downlink.ms /usr/local/share/mahimahi/traces/VerizonLTE-uplink.ms --meter-uplink --meter-uplink-delay --once --uplink-log=/tmp/contest_uplink_log -- ./sender 100.64.0.1 9090} );
+
+# kill the receiver
+kill 'INT', $receiver_pid;
+
+# produce the analysis
+system( q{mm-capacity-graph 500 /tmp/contest_uplink_log > /tmp/uplink.svg} );
+
+system( q{firefox /tmp/uplink.svg} );
+
+# TODO: upload the analysis
