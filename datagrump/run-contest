@@ -11,8 +11,21 @@ if ( $receiver_pid < 0 ) {
   exec q{./receiver 9090} or die qq{$!};
 }
 
+chomp( my $prefix = qx{dirname `which mm-link`} );
+my $tracedir = $prefix . q{/../share/mahimahi/traces};
+
 # run the sender inside a linkshell and a delayshell
-system( q{mm-delay 20 mm-link /usr/local/share/mahimahi/traces/VerizonLTE-downlink.ms /usr/local/share/mahimahi/traces/VerizonLTE-uplink.ms --meter-uplink --meter-uplink-delay --once --uplink-log=/tmp/contest_uplink_log -- ./sender 100.64.0.1 9090} );
+my @command = qw{mm-delay 20 mm-link UPLINK DOWNLINK --meter-uplink --meter-uplink-delay --once --uplink-log=/tmp/contest_uplink_log -- ./sender 100.64.0.1 9090};
+
+# for the contest, we will send data over Verizon's downlink
+# (datagrump sender's uplink)
+die unless $command[ 3 ] eq "UPLINK";
+$command[ 3 ] = qq{$tracedir/VerizonLTE-downlink.ms};
+
+die unless $command[ 4 ] eq "DOWNLINK";
+$command[ 4 ] = qq{$tracedir/VerizonLTE-uplink.ms};
+
+system @command;
 
 # kill the receiver
 kill 'INT', $receiver_pid;
