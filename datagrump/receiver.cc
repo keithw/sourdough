@@ -23,10 +23,6 @@ int main( int argc, char *argv[] )
   /* create UDP socket for incoming datagrams */
   UDPSocket socket;
 
-  /* it's ok to reuse the server's address as soon as the program quits
-     (this helps debugging, at the slight cost to robustness) */
-  socket.set_reuseaddr();
-
   /* turn on timestamps on receipt */
   socket.set_timestamps();
 
