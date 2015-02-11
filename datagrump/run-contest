@@ -1,6 +1,13 @@
 #!/usr/bin/perl -w
 
 use strict;
+use LWP::UserAgent;
+use HTTP::Request::Common;
+
+my $username = $ARGV[ 0 ];
+if ( not defined $username ) {
+  die "Usage: $0 USERNAME\n";
+}
 
 my $receiver_pid = fork;
 
@@ -30,9 +37,25 @@ system @command;
 # kill the receiver
 kill 'INT', $receiver_pid;
 
-# produce the analysis
-system( q{mm-capacity-graph 500 /tmp/contest_uplink_log > /tmp/uplink.svg} );
+print "\n";
 
-system( q{firefox /tmp/uplink.svg} );
+# analyze performance locally
+system q{mm-capacity-graph 500 /tmp/contest_uplink_log > /dev/null};
 
-# TODO: upload the analysis
+print "\n";
+
+# gzip logfile
+print q{Uploading data to server...};
+
+my $www = LWP::UserAgent->new();
+my $request = POST 'http://6829.keithw.org/cgi-bin/6829/upload-data',
+  Content_Type => 'multipart/form-data',
+  Content => [contents => ['/tmp/contest_uplink_log', $username]];
+
+my $response = $www->request( $request );
+
+print qq{ done.\n\n};
+
+print $response->decoded_content;
+
+print "\n";
