@@ -119,17 +119,7 @@ int DatagrumpSender::loop( void )
   /* read and write from the receiver using an event-driven "poller" */
   Poller poller;
 
-  /* first rule: if sender receives an ack,
-     process it and inform the controller
-     (by using the sender's got_ack method) */
-  poller.add_action( Action( socket_, Direction::In, [&] () {
-	const UDPSocket::received_datagram recd = socket_.recv();
-	const ContestMessage ack  = recd.payload;
-	got_ack( recd.timestamp, ack );
-	return ResultType::Continue;
-      } ) );
-
-  /* second rule: if the window is open, close it by
+  /* first rule: if the window is open, close it by
      sending more datagrams */
   poller.add_action( Action( socket_, Direction::Out, [&] () {
 	/* Close the window */
@@ -140,6 +130,16 @@ int DatagrumpSender::loop( void )
       },
       /* We're only interested in this rule when the window is open */
       [&] () { return window_is_open(); } ) );
+
+  /* second rule: if sender receives an ack,
+     process it and inform the controller
+     (by using the sender's got_ack method) */
+  poller.add_action( Action( socket_, Direction::In, [&] () {
+	const UDPSocket::received_datagram recd = socket_.recv();
+	const ContestMessage ack  = recd.payload;
+	got_ack( recd.timestamp, ack );
+	return ResultType::Continue;
+      } ) );
 
   /* Run these two rules forever */
   while ( true ) {
