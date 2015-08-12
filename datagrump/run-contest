@@ -27,10 +27,10 @@ my @command = qw{mm-delay 20 mm-link UPLINK DOWNLINK --meter-uplink --meter-upli
 # for the contest, we will send data over Verizon's downlink
 # (datagrump sender's uplink)
 die unless $command[ 3 ] eq "UPLINK";
-$command[ 3 ] = qq{$tracedir/VerizonLTE-downlink.ms};
+$command[ 3 ] = qq{$tracedir/Verizon-LTE-short.down};
 
 die unless $command[ 4 ] eq "DOWNLINK";
-$command[ 4 ] = qq{$tracedir/VerizonLTE-uplink.ms};
+$command[ 4 ] = qq{$tracedir/Verizon-LTE-short.up};
 
 system @command;
 
