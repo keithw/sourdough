@@ -48,7 +48,7 @@ print "\n";
 print q{Uploading data to server...};
 
 my $www = LWP::UserAgent->new();
-my $request = POST 'http://6829.keithw.org/cgi-bin/6829/upload-data',
+my $request = POST 'http://cs344g.keithw.org/cgi-bin/6829/upload-data',
   Content_Type => 'multipart/form-data',
   Content => [contents => ['/tmp/contest_uplink_log', $username]];
 
