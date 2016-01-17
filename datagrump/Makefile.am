@@ -1,5 +1,5 @@
+AM_CPPFLAGS = $(CXX11_FLAGS) -I$(srcdir)/../src
 AM_CXXFLAGS = $(PICKY_CXXFLAGS)
-AM_CPPFLAGS = -I$(srcdir)/../src
 LDADD = ../src/libsourdough.a -lpthread
 
 common_source = contest_message.hh contest_message.cc \
