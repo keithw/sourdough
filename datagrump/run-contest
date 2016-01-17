@@ -40,7 +40,7 @@ kill 'INT', $receiver_pid;
 print "\n";
 
 # analyze performance locally
-system q{mm-capacity-graph 500 /tmp/contest_uplink_log > /dev/null};
+system q{mm-throughput-graph 500 /tmp/contest_uplink_log > /dev/null};
 
 print "\n";
 
