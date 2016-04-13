@@ -49,7 +49,8 @@ kill 'INT', $receiver_pid;
 print "\n";
 
 # analyze performance locally
-system q{mm-throughput-graph 500 /tmp/contest_uplink_log > /dev/null};
+system q{mm-throughput-graph 500 /tmp/contest_uplink_log > /dev/null}
+  and die q{mm-throughput-graph exited with error. NOT uploading};
 
 print "\n";
 
