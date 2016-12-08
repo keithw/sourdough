@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <numeric>
 
 #include "poller.hh"
 #include "util.hh"
