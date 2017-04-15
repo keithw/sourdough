@@ -2,11 +2,13 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <unistd.h>
 
 #include "socket.hh"
 #include "contest_message.hh"
 #include "controller.hh"
 #include "poller.hh"
+#include "util.hh"
 
 using namespace std;
 using namespace PollerShortNames;
@@ -123,9 +125,13 @@ int DatagrumpSender::loop( void )
      sending more datagrams */
   poller.add_action( Action( socket_, Direction::Out, [&] () {
 	/* Close the window */
-	while ( window_is_open() ) {
-	  send_datagram();
-	}
+    while ( window_is_open() ) {
+      try {
+        send_datagram();
+      } catch ( unix_error ) {
+        return ResultType::Exit;
+      }
+    }
 	return ResultType::Continue;
       },
       /* We're only interested in this rule when the window is open */
@@ -148,7 +154,11 @@ int DatagrumpSender::loop( void )
       return ret.exit_status;
     } else if ( ret.result == PollResult::Timeout ) {
       /* After a timeout, send one datagram to try to get things moving again */
-      send_datagram();
+      try {
+        send_datagram();
+      } catch ( unix_error ) {
+        return 0;
+      }
     }
   }
 }
