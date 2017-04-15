@@ -42,8 +42,14 @@ Poller::Result Poller::poll( const int & timeout_ms )
     return Result::Type::Exit;
   }
 
-  if ( 0 == SystemCall( "poll", ::poll( &pollfds_[ 0 ], pollfds_.size(), timeout_ms ) ) ) {
-    return Result::Type::Timeout;
+  try {
+    if ( 0 == SystemCall( "poll", ::poll( &pollfds_[ 0 ], pollfds_.size(), timeout_ms ) ) ) {
+      return Result::Type::Timeout;
+    }
+  } catch ( unix_error const& e ) {
+    if ( e.code().value() == EINTR ) {
+      return Result::Type::Exit;
+    }
   }
 
   for ( unsigned int i = 0; i < pollfds_.size(); i++ ) {
