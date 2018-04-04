@@ -35,7 +35,7 @@ ContestMessage::ContestMessage( const string & str )
 {}
 
 /* Fill in the send_timestamp for an outgoing message */
-void ContestMessage::set_send_timestamp( void )
+void ContestMessage::set_send_timestamp()
 {
   header.send_timestamp = timestamp_ms();
 }
@@ -49,7 +49,7 @@ string put_header_field( const uint64_t n )
 }
 
 /* Make wire representation of header */
-string ContestMessage::Header::to_string( void ) const
+string ContestMessage::Header::to_string() const
 {
   return put_header_field( sequence_number )
     + put_header_field( send_timestamp )
@@ -60,7 +60,7 @@ string ContestMessage::Header::to_string( void ) const
 }
 
 /* Make wire representation of message */
-string ContestMessage::to_string( void ) const
+string ContestMessage::to_string() const
 {
   return header.to_string() + payload;
 }
@@ -102,7 +102,7 @@ ContestMessage::Header::Header( const uint64_t s_sequence_number )
 {}
 
 /* Is this message an ack? */
-bool ContestMessage::is_ack( void ) const
+bool ContestMessage::is_ack() const
 {
   return header.ack_sequence_number != uint64_t( -1 );
 }

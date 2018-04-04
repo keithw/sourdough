@@ -36,7 +36,7 @@ public:
       : fd( s_fd ), direction( s_direction ), callback( s_callback ),
 	when_interested( s_when_interested ), active( true ) {}
 
-    unsigned int service_count( void ) const;
+    unsigned int service_count() const;
   };
 
 private:

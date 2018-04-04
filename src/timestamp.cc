@@ -10,7 +10,7 @@ static const uint64_t MILLION = 1000000;
 static const uint64_t BILLION = 1000 * MILLION;
 
 /* helper functions */
-static timespec current_time( void )
+static timespec current_time()
 {
   timespec ret;
   SystemCall( "clock_gettime", clock_gettime( CLOCK_REALTIME, &ret ) );
@@ -24,7 +24,7 @@ static uint64_t timestamp_ms_raw( const timespec & ts )
 }
 
 /* Current time in milliseconds since the start of the program */
-uint64_t timestamp_ms( void )
+uint64_t timestamp_ms()
 {
   return timestamp_ms( current_time() );
 }

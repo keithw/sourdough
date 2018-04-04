@@ -27,12 +27,12 @@ private:
 
   void send_datagram( const bool after_timeout );
   void got_ack( const uint64_t timestamp, const ContestMessage & msg );
-  bool window_is_open( void );
+  bool window_is_open();
 
 public:
   DatagrumpSender( const char * const host, const char * const port,
 		   const bool debug );
-  int loop( void );
+  int loop();
 };
 
 int main( int argc, char *argv[] )
@@ -110,12 +110,12 @@ void DatagrumpSender::send_datagram( const bool after_timeout )
 				 after_timeout );
 }
 
-bool DatagrumpSender::window_is_open( void )
+bool DatagrumpSender::window_is_open()
 {
   return sequence_number_ - next_ack_expected_ < controller_.window_size();
 }
 
-int DatagrumpSender::loop( void )
+int DatagrumpSender::loop()
 {
   /* read and write from the receiver using an event-driven "poller" */
   Poller poller;

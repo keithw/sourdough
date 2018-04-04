@@ -22,7 +22,7 @@ struct ContestMessage
     Header( const std::string & str );
 
     /* Make wire representation of header */
-    std::string to_string( void ) const;
+    std::string to_string() const;
   } header;
 
   std::string payload;
@@ -35,17 +35,17 @@ struct ContestMessage
   ContestMessage( const std::string & str );
 
   /* Fill in the send_timestamp for an outgoing datagram */
-  void set_send_timestamp( void );
+  void set_send_timestamp();
 
   /* Make wire representation of datagram */
-  std::string to_string( void ) const;
+  std::string to_string() const;
 
   /* Transform into an ack of the ContestMessage */
   void transform_into_ack( const uint64_t sequence_number,
 			   const uint64_t recv_timestamp );
 
   /* Is this message an ack? */
-  bool is_ack( void ) const;
+  bool is_ack() const;
 };
 
 #endif /* CONTEST_MESSAGE_HH */

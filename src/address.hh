@@ -37,13 +37,13 @@ public:
   Address( const std::string & ip, const uint16_t port );
 
   /* accessors */
-  std::pair<std::string, uint16_t> ip_port( void ) const;
-  std::string ip( void ) const { return ip_port().first; }
-  uint16_t port( void ) const { return ip_port().second; }
-  std::string to_string( void ) const;
+  std::pair<std::string, uint16_t> ip_port() const;
+  std::string ip() const { return ip_port().first; }
+  uint16_t port() const { return ip_port().second; }
+  std::string to_string() const;
 
-  socklen_t size( void ) const { return size_; }
-  const sockaddr & to_sockaddr( void ) const;
+  socklen_t size() const { return size_; }
+  const sockaddr & to_sockaddr() const;
 
   /* equality */
   bool operator==( const Address & other ) const;

@@ -49,12 +49,12 @@ Address Socket::get_address( const std::string & name_of_function,
   return Address( address, size );
 }
 
-Address Socket::local_address( void ) const
+Address Socket::local_address() const
 {
   return get_address( "getsockname", getsockname );
 }
 
-Address Socket::peer_address( void ) const
+Address Socket::peer_address() const
 {
   return get_address( "getpeername", getpeername );
 }
@@ -76,7 +76,7 @@ void Socket::connect( const Address & address )
 }
 
 /* receive datagram and where it came from */
-UDPSocket::received_datagram UDPSocket::recv( void )
+UDPSocket::received_datagram UDPSocket::recv()
 {
   static const ssize_t RECEIVE_MTU = 65536;
 
@@ -177,7 +177,7 @@ void TCPSocket::listen( const int backlog )
 }
 
 /* accept a new incoming connection */
-TCPSocket TCPSocket::accept( void )
+TCPSocket TCPSocket::accept()
 {
   register_read();
   return TCPSocket( FileDescriptor( SystemCall( "accept", ::accept( fd_num(), nullptr, nullptr ) ) ) );
@@ -192,13 +192,13 @@ void Socket::setsockopt( const int level, const int option, const option_type & 
 }
 
 /* allow local address to be reused sooner, at the cost of some robustness */
-void Socket::set_reuseaddr( void )
+void Socket::set_reuseaddr()
 {
   setsockopt( SOL_SOCKET, SO_REUSEADDR, int( true ) );
 }
 
 /* turn on timestamps on receipt */
-void UDPSocket::set_timestamps( void )
+void UDPSocket::set_timestamps()
 {
   setsockopt( SOL_SOCKET, SO_TIMESTAMPNS, int( true ) );
 }

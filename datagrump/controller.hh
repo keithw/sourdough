@@ -21,7 +21,7 @@ public:
   Controller( const bool debug );
 
   /* Get current window size, in datagrams */
-  unsigned int window_size( void );
+  unsigned int window_size();
 
   /* A datagram was sent */
   void datagram_was_sent( const uint64_t sequence_number,
@@ -36,7 +36,7 @@ public:
 
   /* How long to wait (in milliseconds) if there are no acks
      before sending one more datagram */
-  unsigned int timeout_ms( void );
+  unsigned int timeout_ms();
 };
 
 #endif

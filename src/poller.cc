@@ -14,7 +14,7 @@ void Poller::add_action( Poller::Action action )
   pollfds_.push_back( { action.fd.fd_num(), 0, 0 } );
 }
 
-unsigned int Poller::Action::service_count( void ) const
+unsigned int Poller::Action::service_count() const
 {
   return direction == Direction::In ? fd.read_count() : fd.write_count();
 }

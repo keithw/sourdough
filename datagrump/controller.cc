@@ -11,7 +11,7 @@ Controller::Controller( const bool debug )
 {}
 
 /* Get current window size, in datagrams */
-unsigned int Controller::window_size( void )
+unsigned int Controller::window_size()
 {
   /* Default: fixed window size of 100 outstanding datagrams */
   unsigned int the_window_size = 50;
@@ -63,7 +63,7 @@ void Controller::ack_received( const uint64_t sequence_number_acked,
 
 /* How long to wait (in milliseconds) if there are no acks
    before sending one more datagram */
-unsigned int Controller::timeout_ms( void )
+unsigned int Controller::timeout_ms()
 {
   return 1000; /* timeout of one second */
 }

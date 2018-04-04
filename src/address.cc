@@ -36,7 +36,7 @@ Address::Address( const sockaddr & addr, const size_t size )
 class gai_error_category : public error_category
 {
 public:
-  const char * name( void ) const noexcept override { return "gai_error_category"; }
+  const char * name() const noexcept override { return "gai_error_category"; }
   string message( const int return_value ) const noexcept override
   {
     return gai_strerror( return_value );
@@ -97,7 +97,7 @@ Address::Address( const std::string & ip, const uint16_t port )
 
 /* accessors */
 
-pair<string, uint16_t> Address::ip_port( void ) const
+pair<string, uint16_t> Address::ip_port() const
 {
   char ip[ NI_MAXHOST ], port[ NI_MAXSERV ];
 
@@ -124,13 +124,13 @@ pair<string, uint16_t> Address::ip_port( void ) const
   return make_pair( ip_string, stoi( port ) );
 }
 
-string Address::to_string( void ) const
+string Address::to_string() const
 {
   const auto ip_and_port = ip_port();
   return ip_and_port.first + ":" + ::to_string( ip_and_port.second );
 }
 
-const sockaddr & Address::to_sockaddr( void ) const
+const sockaddr & Address::to_sockaddr() const
 {
   return addr_.as_sockaddr;
 }
