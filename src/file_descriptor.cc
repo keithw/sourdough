@@ -59,6 +59,7 @@ string::const_iterator FileDescriptor::write( const string::const_iterator & beg
 /* read method */
 string FileDescriptor::read( const size_t limit )
 {
+  constexpr size_t BUFFER_SIZE = 1024 * 1024;   /* maximum size of a read */
   char buffer[ BUFFER_SIZE ];
 
   ssize_t bytes_read = SystemCall( "read", ::read( fd_, buffer, min( BUFFER_SIZE, limit ) ) );

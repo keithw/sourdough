@@ -1,6 +1,7 @@
 #ifndef FILE_DESCRIPTOR_HH
 #define FILE_DESCRIPTOR_HH
 
+#include <limits>
 #include <string>
 
 /* Unix file descriptors (sockets, files, etc.) */
@@ -15,9 +16,6 @@ private:
   /* attempt to write a portion of a string */
   std::string::const_iterator write( const std::string::const_iterator & begin,
 				     const std::string::const_iterator & end );
-
-  /* maximum size of a read */
-  const static size_t BUFFER_SIZE = 1024 * 1024;
 
 protected:
   void register_read() { read_count_++; }
@@ -41,7 +39,7 @@ public:
   unsigned int write_count() const { return write_count_; }
 
   /* read and write methods */
-  std::string read( const size_t limit = BUFFER_SIZE );
+  std::string read( const size_t limit = std::numeric_limits<size_t>::max() );
   std::string::const_iterator write( const std::string & buffer, const bool write_all = true );
 
   /* forbid copying FileDescriptor objects or assigning them */
